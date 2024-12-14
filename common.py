@@ -39,7 +39,10 @@ def get_args() -> argparse.Namespace:
         help="Set English to True",
     )
     parser.add_argument(
-        "-g", "--graphical-diff", action="store_true", help="graphical-diff"
+        "-g", "--graphical-diff", action="store_true", default=True, help="graphical-diff"
+    )
+    parser.add_argument(
+        "-t", "--text-diff", action="store_true", default=False, help="text-diff"
     )
     args = parser.parse_args()
     return args
@@ -132,6 +135,10 @@ def diff_content(args: argparse.Namespace, content: str, new: str) -> str:
     if args.graphical_diff and shutil.which("kitten"):
         diff_tool = "kitten"
         diff_args = ["diff"]
+
+    if args.text_diff:
+        diff_tool = "diff"
+        diff_args = ["-u"]
 
     # Perform the diff
     try:
