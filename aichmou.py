@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # Author: Chmouel Boudjnah <chmouel@chmouel.com>
 
-from src.azure import AzureAI
-from src.common import (get_args, get_pass_key, get_prompt, get_text,
-                        show_response)
-from src.mistral import MistralAI
+from aichmou.azure import AzureAI
+from aichmou.common import (get_args, get_pass_key, get_prompt, get_text,
+                            show_response)
+from aichmou.mistral import MistralAI
 
 
 def main():

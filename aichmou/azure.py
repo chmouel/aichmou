@@ -4,7 +4,8 @@
 from azure.ai.inference import ChatCompletionsClient
 from azure.ai.inference.models import SystemMessage, UserMessage
 from azure.core.credentials import AzureKeyCredential
-from src.abstract_ai import AbstractAI
+
+from .abstract_ai import AbstractAI
 
 
 class AzureAI(AbstractAI):
@@ -28,7 +29,8 @@ class AzureAI(AbstractAI):
 
 # Example usage
 if __name__ == "__main__":
-    from src.common import get_args, get_pass_key, get_prompt, get_text, show_response
+    from src.common import (get_args, get_pass_key, get_prompt, get_text,
+                            show_response)
 
     args = get_args()
     prompt = get_prompt(args)
