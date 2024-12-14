@@ -61,15 +61,30 @@ def get_pass_key(pass_key: str) -> str:
     return output.strip()
 
 
+def get_clipboard_text() -> str:
+    if sys.platform == "darwin":
+        return subprocess.check_output("pbpaste", shell=True).decode("utf-8").strip()
+    elif sys.platform.startswith("linux"):
+        return subprocess.check_output("wl-paste", shell=True).decode("utf-8").strip()
+    else:
+        raise NotImplementedError("Unsupported platform")
+
+def set_clipboard_text(content: str):
+    if sys.platform == "darwin":
+        subprocess.run("pbcopy", input=content, text=True)
+    elif sys.platform.startswith("linux"):
+        subprocess.run("wl-copy", input=content, text=True)
+    else:
+        raise NotImplementedError("Unsupported platform")
+
 def get_text() -> str:
-    text = subprocess.check_output("pbpaste", shell=True).decode("utf-8").strip()
+    text = get_clipboard_text()
     if not text:
         try:
             text = input("Enter text to correct: ")
         except KeyboardInterrupt:
             print("No input exiting")
             sys.exit(1)
-
     return text
 
 
@@ -85,7 +100,7 @@ def show_response(args: argparse.Namespace, oldcontent, content: str):
     diff = diff_content(args, oldcontent.strip(), content).strip()
     if diff:
         print(diff)
-    subprocess.run("pbcopy", input=content, text=True)
+    set_clipboard_text(content)
 
 
 def diff_content(args: argparse.Namespace, content: str, new: str) -> str:
