@@ -39,11 +39,23 @@ def get_args() -> argparse.Namespace:
         help="Set English to True",
     )
     parser.add_argument(
-        "-g", "--graphical-diff", action="store_true", default=True, help="graphical-diff"
+        "-g",
+        "--graphical-diff",
+        action="store_true",
+        default=True,
+        help="Do graphical diff with kitty",
     )
     parser.add_argument(
-        "-t", "--text-diff", action="store_true", default=False, help="text-diff"
+        "-t",
+        "--text-diff",
+        action="store_true",
+        default=False,
+        help="Show diff with git diff",
     )
+    parser.add_argument(
+        "--mistral", action="store_true", default=False, help="Use mistral"
+    )
+    parser.add_argument("--azure", action="store_true", default=False, help="Use azure")
     args = parser.parse_args()
     return args
 
@@ -72,6 +84,7 @@ def get_clipboard_text() -> str:
     else:
         raise NotImplementedError("Unsupported platform")
 
+
 def set_clipboard_text(content: str):
     if sys.platform == "darwin":
         subprocess.run("pbcopy", input=content, text=True)
@@ -79,6 +92,7 @@ def set_clipboard_text(content: str):
         subprocess.run("wl-copy", input=content, text=True)
     else:
         raise NotImplementedError("Unsupported platform")
+
 
 def get_text() -> str:
     text = get_clipboard_text()
