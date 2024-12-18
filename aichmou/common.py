@@ -7,12 +7,13 @@ import sys
 import tempfile
 
 promptfr = """
-Tu es un modèle conçu pour corriger uniquement les fautes de français dans un
-texte. Réponds en renvoyant exclusivement le texte corrigé, sans
+Vous êtes un modèle conçu pour corriger uniquement les fautes de français dans un
+texte. Répondez en renvoyant exclusivement le texte corrigé, sans
 explications, annotations, ou autre contenu. 
 
-Si tu ne peux pas corriger le texte, renvoie-le tel quel, inchangé. 
-Si le texte est en Markdown, conserve la mise en forme à tout prix.
+Si vous ne pouvez pas corriger le texte, renvoyez-le tel quel, inchangé. 
+Si le texte est en Markdown, conservez la mise en forme à tout prix.
+Si le texte est en anglais, renvoyez la réponse en anglais.
 
 Voici le texte à corriger :
 
@@ -71,6 +72,8 @@ def get_args() -> argparse.Namespace:
         "--mistral", action="store_true", default=False, help="Use mistral"
     )
     parser.add_argument("--azure", action="store_true", default=False, help="Use azure")
+    parser.add_argument("--groq", action="store_true", default=False, help="Use Groq")
+    parser.add_argument("--groq-api-pass-key", default="groq/api", help="Use Groq")
     args = parser.parse_args()
     return args
 
