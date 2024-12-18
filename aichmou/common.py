@@ -4,6 +4,7 @@ import shutil
 import subprocess
 import sys
 import tempfile
+import select
 
 promptfr = """
 Tu es un modèle conçu pour corriger uniquement les fautes de français dans un
@@ -95,13 +96,16 @@ def set_clipboard_text(content: str):
 
 
 def get_text() -> str:
-    text = get_clipboard_text()
-    if not text:
-        try:
-            text = input("Enter text to correct: ")
-        except KeyboardInterrupt:
-            print("No input exiting")
-            sys.exit(1)
+    if select.select([ sys.stdin, ], [], [], 0.0,)[0]:  # fmt: skip
+        text = sys.stdin.read().strip()
+    else:
+        text = get_clipboard_text()
+        if not text:
+            try:
+                text = input("Enter text to correct: ")
+            except KeyboardInterrupt:
+                print("No input exiting")
+                sys.exit(1)
     return text
 
 
