@@ -1,10 +1,10 @@
 import argparse
 import os
+import select
 import shutil
 import subprocess
 import sys
 import tempfile
-import select
 
 promptfr = """
 Tu es un modèle conçu pour corriger uniquement les fautes de français dans un
@@ -52,6 +52,20 @@ def get_args() -> argparse.Namespace:
         action="store_true",
         default=False,
         help="Show diff with git diff",
+    )
+    parser.add_argument(
+        "-n",
+        "--no-diff",
+        action="store_true",
+        default=False,
+        help="No diff output",
+    )
+    parser.add_argument(
+        "-C",
+        "--no-clipboard-copy",
+        action="store_true",
+        default=False,
+        help="No clipboard copy",
     )
     parser.add_argument(
         "--mistral", action="store_true", default=False, help="Use mistral"
@@ -118,10 +132,22 @@ def show_response(args: argparse.Namespace, oldcontent, content: str):
 
     if not content:
         return
-    diff = diff_content(args, oldcontent.strip(), content).strip()
-    if diff:
-        print(diff)
-    set_clipboard_text(content)
+
+    oldcontent = oldcontent.strip()
+    content = content.strip()
+
+    if oldcontent == content:
+        return
+
+    if not args.no_diff:
+        diff = diff_content(args, oldcontent, content).strip()
+        if diff:
+            print(diff)
+
+    if args.no_clipboard_copy:
+        print(content)
+    else:
+        set_clipboard_text(content)
 
 
 def diff_content(args: argparse.Namespace, content: str, new: str) -> str:
