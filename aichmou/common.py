@@ -31,6 +31,23 @@ Here is the text to correct:
 %s
 """
 
+promptgitcommit = """
+Write a commit message categorizing the change as one of the following: 
+- Feature: For new functionality or enhancements. 
+- Bugfix: For bug resolutions or fixes. 
+- Chore: For non-functional updates like refactoring or dependency upgrades. 
+- Tests: For additions or updates to test cases.
+
+Ensure:
+- The title has a maximum of 50 characters.
+- The detailed message is wrapped at 72 characters.
+- The title and message are separated by a blank line.
+
+Here is the diff:
+
+%s
+"""
+
 
 def get_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Process some arguments.")
@@ -39,6 +56,11 @@ def get_args() -> argparse.Namespace:
         "--english",
         action="store_true",
         help="Set English to True",
+    )
+    parser.add_argument(
+        "--git-commit",
+        action="store_true",
+        help="Generate a Git commit message",
     )
     parser.add_argument(
         "-g",
@@ -93,6 +115,8 @@ def get_args() -> argparse.Namespace:
 def get_prompt(args: argparse.Namespace) -> str:
     if args.english:
         return prompten
+    elif args.git_commit:
+        return promptgitcommit
     return promptfr
 
 

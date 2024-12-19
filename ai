@@ -3,8 +3,7 @@
 import sys
 
 from aichmou.azure import AzureAI
-from aichmou.common import (get_args, get_pass_key, get_prompt, get_text,
-                            show_response)
+from aichmou.common import get_args, get_pass_key, get_prompt, get_text, show_response
 from aichmou.gemini import Gemini
 from aichmou.groq import Groq
 from aichmou.mistral import MistralAI
