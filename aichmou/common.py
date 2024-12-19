@@ -71,7 +71,10 @@ def get_args() -> argparse.Namespace:
     parser.add_argument(
         "--mistral", action="store_true", default=False, help="Use mistral"
     )
-    parser.add_argument("--azure", action="store_true", default=False, help="Use azure")
+    parser.add_argument("--azure", action="store_true", default=False, help="Use Azure")
+    parser.add_argument(
+        "--openai", action="store_true", default=False, help="Use OpenAI"
+    )
     parser.add_argument("--groq", action="store_true", default=False, help="Use Groq")
     parser.add_argument("--groq-api-pass-key", default="groq/api", help="Use Groq")
     args = parser.parse_args()

@@ -1,14 +1,50 @@
 #!/usr/bin/env python
 # Author: Chmouel Boudjnah <chmouel@chmouel.com>
+import sys
 
 from aichmou.azure import AzureAI
-from aichmou.common import (get_args, get_pass_key, get_prompt, get_text,
-                            show_response)
+from aichmou.common import get_args, get_pass_key, get_prompt, get_text, show_response
 from aichmou.groq import Groq
 from aichmou.mistral import MistralAI
 from aichmou.openai import OpenAI
 
 SERVER_URL = "https://models.inference.ai.azure.com"
+
+
+# Try from top to bottom provider if they raise exception try the others
+def fallover(args, prompt, api_key, text):
+    try:
+        ai = AzureAI(api_key=api_key, server_url=SERVER_URL)
+        newcontent = ai.complete(prompt, text)
+    except Exception as e:
+        sys.stderr.write(f"AzureAI failed: {e}\n")
+
+    if not newcontent:
+        try:
+            ai = OpenAI(api_key=api_key, server_url=SERVER_URL)
+            newcontent = ai.complete(prompt, text)
+        except Exception as e:
+            sys.stderr.write(f"OpenAI failed: {e}\n")
+
+    if not newcontent:
+        try:
+            ai = MistralAI(api_key=api_key, server_url=SERVER_URL)
+            newcontent = ai.complete(prompt, text)
+        except Exception as e:
+            sys.stderr.write(f"MistralAI failed: {e}\n")
+
+    if not newcontent:
+        try:
+            ai = Groq(api_key="pass::" + args.groq_api_pass_key, server_url=None)
+            newcontent = ai.complete(prompt, text)
+        except Exception as e:
+            sys.stderr.write(f"Groq failed: {e}\n")
+
+    if not newcontent:
+        sys.stderr.write("All failed, exiting\n")
+        sys.exit(1)
+
+    show_response(args, text, newcontent)
 
 
 def main():
@@ -23,8 +59,11 @@ def main():
         ai = AzureAI(api_key=api_key, server_url=SERVER_URL)
     elif args.groq:
         ai = Groq(api_key="pass::" + args.groq_api_pass_key, server_url=None)
-    else:
+    elif args.openai:
         ai = OpenAI(api_key=api_key, server_url=SERVER_URL)
+    else:
+        fallover(args, prompt, api_key, text)
+        sys.exit(0)
 
     newcontent = ai.complete(prompt, text)
     show_response(args, text, newcontent)
