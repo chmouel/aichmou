@@ -17,5 +17,5 @@ class Gemini(AbstractAI):
             api_key = get_pass_key(self.api_key.split("::")[1])
         genai.configure(api_key=api_key)
         model = genai.GenerativeModel(self.model)
-        response = model.generate_content(prompt + text)
+        response = model.generate_content(prompt % text)
         return response.text

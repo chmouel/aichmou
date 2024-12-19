@@ -76,7 +76,16 @@ def get_args() -> argparse.Namespace:
         "--openai", action="store_true", default=False, help="Use OpenAI"
     )
     parser.add_argument("--groq", action="store_true", default=False, help="Use Groq")
-    parser.add_argument("--groq-api-pass-key", default="groq/api", help="Use Groq")
+    parser.add_argument(
+        "--groq-api-pass-key", default="groq/api", help="Groq API Key in pass store"
+    )
+
+    parser.add_argument("--gemini", action="store_true", default=False, help="Use Groq")
+    parser.add_argument(
+        "--gemini-api-pass-key",
+        default="google/gemini-api",
+        help="Gemini API Key in pass store",
+    )
     args = parser.parse_args()
     return args
 
