@@ -97,6 +97,12 @@ def get_args() -> argparse.Namespace:
     parser.add_argument(
         "--openai", action="store_true", default=False, help="Use OpenAI"
     )
+    parser.add_argument(
+        "--chatgpt",
+        action="store_true",
+        default=False,
+        help="Use ChatGPT (need the gh-gpt command installed in path and cnfigured)",
+    )
     parser.add_argument("--groq", action="store_true", default=False, help="Use Groq")
     parser.add_argument(
         "--groq-api-pass-key", default="groq/api", help="Groq API Key in pass store"
