@@ -189,10 +189,9 @@ def show_response(args: argparse.Namespace, oldcontent, content: str):
         if diff:
             print(diff)
 
-    if args.no_clipboard_copy:
-        print(content)
-    else:
+    if not args.no_clipboard_copy:
         set_clipboard_text(content)
+    print(content)
 
 
 def diff_content(args: argparse.Namespace, content: str, new: str) -> str:
