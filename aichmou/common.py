@@ -66,7 +66,7 @@ def get_args() -> argparse.Namespace:
         "-g",
         "--graphical-diff",
         action="store_true",
-        default=True,
+        default=False,
         help="Do graphical diff with kitty",
     )
     parser.add_argument(
@@ -80,7 +80,7 @@ def get_args() -> argparse.Namespace:
         "-n",
         "--no-diff",
         action="store_true",
-        default=False,
+        default=True,
         help="No diff output",
     )
     parser.add_argument(
