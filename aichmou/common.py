@@ -58,6 +58,12 @@ def get_args() -> argparse.Namespace:
         help="Set English to True",
     )
     parser.add_argument(
+        "-N",
+        "--no-output",
+        action="store_true",
+        help="Do not show output",
+    )
+    parser.add_argument(
         "--git-commit",
         action="store_true",
         help="Generate a Git commit message",
@@ -191,7 +197,9 @@ def show_response(args: argparse.Namespace, oldcontent, content: str):
 
     if not args.no_clipboard_copy:
         set_clipboard_text(content)
-    print(content)
+
+    if not args.no_output:
+        print(content)
 
 
 def diff_content(args: argparse.Namespace, content: str, new: str) -> str:
