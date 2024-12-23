@@ -118,10 +118,10 @@ def get_args() -> argparse.Namespace:
     return args
 
 
-def get_prompt(english, git_commit) -> str:
-    if english:
+def get_prompt(args: argparse.Namespace) -> str:
+    if args.english:
         return prompten
-    elif git_commit:
+    elif args.git_commit:
         return promptgitcommit
     return promptfr
 
@@ -282,41 +282,3 @@ def pipe_to_diff_tool(content):
             raise RuntimeError(f"Error running {diff_tool}: {stderr.decode()}")
     else:
         raise RuntimeError("Neither 'delta' nor 'diff-so-fancy' is installed")
-
-
-def main():
-    parser = argparse.ArgumentParser(description="Text correction tool")
-    parser.add_argument("--no-diff", action="store_true", help="Do not show diff.")
-    parser.add_argument(
-        "--no-clipboard-copy",
-        action="store_true",
-        help="Do not copy result to clipboard.",
-    )
-    parser.add_argument(
-        "--graphical-diff",
-        action="store_true",
-        help="Use graphical diff tool if available.",
-    )
-    parser.add_argument("--text-diff", action="store_true", help="Use text diff tool.")
-
-    subparsers = parser.add_subparsers(dest="command", required=True)
-
-    spell_parser = subparsers.add_parser("spell", help="Correct spelling and grammar")
-    gitcommit_parser = subparsers.add_parser(
-        "gitcommit", help="Generate git commit message"
-    )
-
-    return parser.parse_args()
-
-    # text = get_text()
-    # if args.command == 'spell':
-    #     prompt = get_prompt(english=False, git_commit=False)
-    # elif args.command == 'gitcommit':
-    #     prompt = get_prompt(english=False, git_commit=True)
-
-    # response = subprocess.run(["your_model_command", prompt % text], capture_output=True, text=True)
-    # show_response(args, text, response.stdout)
-
-
-if __name__ == "__main__":
-    main()
