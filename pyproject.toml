@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "azure-ai-inference>=1.0.0b6",
+    "click>=8.1.7",
     "google-generativeai>=0.8.3",
     "groq>=0.13.1",
     "grpcio==1.60.1",
@@ -14,4 +15,7 @@ dependencies = [
 ]
 
 [dependency-groups]
-dev = ["ipython>=8.30.0", "isort>=5.13.2"]
+dev = [
+    "ipython>=8.30.0",
+    "isort>=5.13.2",
+]

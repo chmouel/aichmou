@@ -1,90 +1,14 @@
 #!/usr/bin/env python
 # Author: Chmouel Boudjnah <chmouel@chmouel.com>
-import sys
 
-from aichmou.azure import AzureAI
-from aichmou.chatgpt import ChatGPT
-from aichmou.common import get_args, get_pass_key, get_prompt, get_text, show_response
-from aichmou.gemini import Gemini
-from aichmou.groq import Groq
-from aichmou.mistral import MistralAI
-from aichmou.openai import OpenAI
+import click
 
-SERVER_URL = "https://models.inference.ai.azure.com"
-
-
-# Try from top to bottom provider if they raise exception try the others
-def fallover(args, prompt, api_key, text):
-    try:
-        ai = ChatGPT(api_key=None, server_url=None)
-        newcontent = ai.complete(prompt, text)
-    except Exception as e:
-        sys.stderr.write(f"ChatGPT failed: {e}\n")
-
-    try:
-        ai = Gemini(api_key="pass::" + args.gemini_api_pass_key, server_url=None)
-        newcontent = ai.complete(prompt, text)
-    except Exception as e:
-        sys.stderr.write(f"Gemini failed: {e}\n")
-
-    try:
-        ai = AzureAI(api_key=api_key, server_url=SERVER_URL)
-        newcontent = ai.complete(prompt, text)
-    except Exception as e:
-        sys.stderr.write(f"AzureAI failed: {e}\n")
-
-    if not newcontent:
-        try:
-            ai = OpenAI(api_key=api_key, server_url=SERVER_URL)
-            newcontent = ai.complete(prompt, text)
-        except Exception as e:
-            sys.stderr.write(f"OpenAI failed: {e}\n")
-
-    if not newcontent:
-        try:
-            ai = MistralAI(api_key=api_key, server_url=SERVER_URL)
-            newcontent = ai.complete(prompt, text)
-        except Exception as e:
-            sys.stderr.write(f"MistralAI failed: {e}\n")
-
-    if not newcontent:
-        try:
-            ai = Groq(api_key="pass::" + args.groq_api_pass_key, server_url=None)
-            newcontent = ai.complete(prompt, text)
-        except Exception as e:
-            sys.stderr.write(f"Groq failed: {e}\n")
-
-    if not newcontent:
-        sys.stderr.write("All failed, exiting\n")
-        sys.exit(1)
-
-    show_response(args, text, newcontent)
+import aichmou.args
+import aichmou.commands  # noqa
 
 
 def main():
-    args = get_args()
-    prompt = get_prompt(args)
-    text = get_text()
-    api_key = get_pass_key("github/chmouel-token")
-
-    if args.mistral:
-        ai = MistralAI(api_key=api_key, server_url=SERVER_URL)
-    elif args.gemini:
-        ai = Gemini(api_key="pass::" + args.gemini_api_pass_key, server_url=None)
-    elif args.azure:
-        ai = AzureAI(api_key=api_key, server_url=SERVER_URL)
-    elif args.groq:
-        ai = Groq(api_key="pass::" + args.groq_api_pass_key, server_url=None)
-    elif args.openai:
-        ai = OpenAI(api_key=api_key, server_url=SERVER_URL)
-    elif args.chatgpt:
-        ai = ChatGPT(api_key=None, server_url=None)
-    else:
-        fallover(args, prompt, api_key, text)
-        sys.exit(0)
-
-    newcontent = ai.complete(prompt, text)
-    show_response(args, text, newcontent)
+    click.echo(aichmou.args.cli())
 
 
 if __name__ == "__main__":

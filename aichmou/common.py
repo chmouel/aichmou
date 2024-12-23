@@ -6,158 +6,65 @@ import subprocess
 import sys
 import tempfile
 
-promptfr = """
-Vous êtes un modèle conçu pour corriger uniquement les fautes de français dans un
-texte. Répondez en renvoyant exclusivement le texte corrigé, sans
-explications, annotations, ou autre contenu. 
 
-Si vous ne pouvez pas corriger le texte, renvoyez-le tel quel, inchangé. 
-Si le texte est en Markdown, conservez la mise en forme à tout prix.
-Si le texte est en anglais, renvoyez la réponse en anglais.
+class PassKeyError(Exception):
+    """Exception raised for errors in retrieving the pass key."""
 
-Voici le texte à corriger :
-
-%s
-"""
-
-prompten = """
-You are a model designed to correct grammar, spelling, and syntax errors in
-English text. Respond by returning only the corrected text, with no
-explanations, annotations, or additional content. 
-If the text cannot be corrected, return it unchanged. 
-If the text is in Markdown, keep the formatting. 
-Here is the text to correct:
-
-%s
-"""
-
-promptgitcommit = """
-Write a commit message categorizing the change as one of the following: 
-- Feature: For new functionality or enhancements. 
-- Bugfix: For bug resolutions or fixes. 
-- Chore: For non-functional updates like refactoring or dependency upgrades. 
-- Tests: For additions or updates to test cases.
-
-Ensure:
-- The title has a maximum of 50 characters.
-- The detailed message is wrapped at 72 characters.
-- The title and message are separated by a blank line.
-
-Here is the diff:
-
-%s
-"""
+    pass
 
 
-def get_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Process some arguments.")
-    parser.add_argument(
-        "-e",
-        "--english",
-        action="store_true",
-        help="Set English to True",
-    )
-    parser.add_argument(
-        "-N",
-        "--no-output",
-        action="store_true",
-        help="Do not show output",
-    )
-    parser.add_argument(
-        "--git-commit",
-        action="store_true",
-        help="Generate a Git commit message",
-    )
-    parser.add_argument(
-        "-g",
-        "--graphical-diff",
-        action="store_true",
-        default=False,
-        help="Do graphical diff with kitty",
-    )
-    parser.add_argument(
-        "-t",
-        "--text-diff",
-        action="store_true",
-        default=False,
-        help="Show diff with git diff",
-    )
-    parser.add_argument(
-        "-n",
-        "--no-diff",
-        action="store_true",
-        default=True,
-        help="No diff output",
-    )
-    parser.add_argument(
-        "-C",
-        "--no-clipboard-copy",
-        action="store_true",
-        default=False,
-        help="No clipboard copy",
-    )
-    parser.add_argument(
-        "--mistral", action="store_true", default=False, help="Use mistral"
-    )
-    parser.add_argument("--azure", action="store_true", default=False, help="Use Azure")
-    parser.add_argument(
-        "--openai", action="store_true", default=False, help="Use OpenAI"
-    )
-    parser.add_argument(
-        "--chatgpt",
-        action="store_true",
-        default=False,
-        help="Use ChatGPT (need the gh-gpt command installed in path and cnfigured)",
-    )
-    parser.add_argument("--groq", action="store_true", default=False, help="Use Groq")
-    parser.add_argument(
-        "--groq-api-pass-key", default="groq/api", help="Groq API Key in pass store"
-    )
+class ClipboardError(Exception):
+    """Exception raised for errors in clipboard operations."""
 
-    parser.add_argument("--gemini", action="store_true", default=False, help="Use Groq")
-    parser.add_argument(
-        "--gemini-api-pass-key",
-        default="google/gemini-api",
-        help="Gemini API Key in pass store",
-    )
-    args = parser.parse_args()
-    return args
+    pass
 
 
-def get_prompt(args: argparse.Namespace) -> str:
-    if args.english:
-        return prompten
-    elif args.git_commit:
-        return promptgitcommit
-    return promptfr
+class DiffToolError(Exception):
+    """Exception raised for errors in diff tool operations."""
+
+    pass
 
 
 def get_pass_key(pass_key: str) -> str:
     """Get token from pass."""
-    output: str = subprocess.check_output(f"pass show {pass_key}", shell=True).decode(
-        "utf-8"
-    )
+    try:
+        output: str = subprocess.check_output(
+            f"pass show {pass_key}", shell=True
+        ).decode("utf-8")
+    except subprocess.CalledProcessError as e:
+        raise PassKeyError(f"Error retrieving pass key {pass_key}: {e}")
+
     if not output:
-        raise Exception(f"pass {pass_key} is empty or not found.")
+        raise PassKeyError(f"pass {pass_key} is empty or not found.")
     return output.strip()
 
 
 def get_clipboard_text() -> str:
-    if sys.platform == "darwin":
-        return subprocess.check_output("pbpaste", shell=True).decode("utf-8").strip()
-    elif sys.platform.startswith("linux"):
-        return subprocess.check_output("wl-paste", shell=True).decode("utf-8").strip()
-    else:
-        raise NotImplementedError("Unsupported platform")
+    try:
+        if sys.platform == "darwin":
+            return (
+                subprocess.check_output("pbpaste", shell=True).decode("utf-8").strip()
+            )
+        elif sys.platform.startswith("linux"):
+            return (
+                subprocess.check_output("wl-paste", shell=True).decode("utf-8").strip()
+            )
+        else:
+            raise ClipboardError("Unsupported platform")
+    except subprocess.CalledProcessError as e:
+        raise ClipboardError(f"Error getting clipboard text: {e}")
 
 
 def set_clipboard_text(content: str):
-    if sys.platform == "darwin":
-        subprocess.run("pbcopy", input=content, text=True)
-    elif sys.platform.startswith("linux"):
-        subprocess.run("wl-copy", input=content, text=True)
-    else:
-        raise NotImplementedError("Unsupported platform")
+    try:
+        if sys.platform == "darwin":
+            subprocess.run("pbcopy", input=content, text=True)
+        elif sys.platform.startswith("linux"):
+            subprocess.run("wl-copy", input=content, text=True)
+        else:
+            raise ClipboardError("Unsupported platform")
+    except subprocess.CalledProcessError as e:
+        raise ClipboardError(f"Error setting clipboard text: {e}")
 
 
 def get_text() -> str:
@@ -169,12 +76,13 @@ def get_text() -> str:
             try:
                 text = input("Enter text to correct: ")
             except KeyboardInterrupt:
-                print("No input exiting")
+                sys.stderr.write("No input exiting")
                 sys.exit(1)
     return text
 
 
-def show_response(args: argparse.Namespace, oldcontent, content: str):
+def show_response(args: argparse.Namespace, oldcontent, content: str) -> str:
+    output = ""
     if content.startswith('"'):
         content = content[1:]
 
@@ -182,24 +90,26 @@ def show_response(args: argparse.Namespace, oldcontent, content: str):
         content = content[:-1]
 
     if not content:
-        return
+        return ""
 
     oldcontent = oldcontent.strip()
     content = content.strip()
 
     if oldcontent == content:
-        return
+        return ""
 
     if not args.no_diff:
         diff = diff_content(args, oldcontent, content).strip()
         if diff:
-            print(diff)
+            output += diff
 
     if not args.no_clipboard_copy:
         set_clipboard_text(content)
 
     if not args.no_output:
-        print(content)
+        output += content
+
+    return output
 
 
 def diff_content(args: argparse.Namespace, content: str, new: str) -> str:
@@ -248,8 +158,8 @@ def diff_content(args: argparse.Namespace, content: str, new: str) -> str:
         diff_output = result.stdout
     except subprocess.CalledProcessError as e:
         diff_output = e.stdout + e.stderr
-
-    # Clean up temporary files
+    except Exception as e:
+        raise DiffToolError(f"Error running diff tool: {e}")
     finally:
         try:
             os.remove(old_file_name)
