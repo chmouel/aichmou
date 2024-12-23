@@ -1,8 +1,7 @@
 import click
 
-from aichmou import prompt
+from aichmou import prompt, run
 from aichmou.args import cli
-from aichmou.run import run_args
 
 
 @cli.command()
@@ -16,6 +15,6 @@ def spell(ctx, english):
     if english:
         pprompt = prompt.SPELL_EN
 
-    output = run_args(args, pprompt)
+    output = run.args(args, pprompt)
     if output:
         click.echo(output)

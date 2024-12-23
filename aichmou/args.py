@@ -1,5 +1,7 @@
 import click
 
+from . import run
+
 
 class DictToObject:
     def __init__(self, dictionary):
@@ -51,5 +53,6 @@ class DictToObject:
 @click.pass_context
 def cli(ctx, *_args, **_kwargs):
     ctx.ensure_object(dict)
+    _kwargs["orders"] = run.DEFAULT_ORDERS
     ctx.obj["args"] = DictToObject(_kwargs)
     return _args, _kwargs

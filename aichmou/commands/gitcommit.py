@@ -1,8 +1,7 @@
 import click
 
-from aichmou import prompt
+from aichmou import prompt, run
 from aichmou.args import cli
-from aichmou.run import run_args
 
 
 @cli.command()
@@ -10,8 +9,11 @@ from aichmou.run import run_args
 def gitcommit(ctx):
     """Generate a git commit message"""
     args = ctx.obj["args"]
+    args.orders = run.DEFAULT_ORDERS
+    args.orders.remove("openai")
+    args.orders.insert(0, "openai")
     pprompt = prompt.GIT_COMMIT
 
-    output = run_args(args, pprompt)
+    output = run.args(args, pprompt)
     if output:
         click.echo(output)

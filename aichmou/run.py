@@ -9,47 +9,34 @@ from .providers.mistral import MistralAI
 from .providers.openai import OpenAI
 
 SERVER_URL = "https://models.inference.ai.azure.com"
+DEFAULT_ORDERS = ["chatgpt", "gemini", "azureai", "openai", "mistralai", "groq"]
 
 
-def fallover(args, prompt, api_key, text):
-    try:
-        ai = ChatGPT(api_key=None, server_url=None)
-        newcontent = ai.complete(prompt, text)
-    except Exception as e:
-        sys.stderr.write(f"ChatGPT failed: {e}\n")
+def fallover(args, prompt, api_key, text, orders=None):
+    orders = orders or DEFAULT_ORDERS
+    newcontent = None
 
-    try:
-        ai = Gemini(api_key="pass::" + args.gemini_api_pass_key, server_url=None)
-        newcontent = ai.complete(prompt, text)
-    except Exception as e:
-        sys.stderr.write(f"Gemini failed: {e}\n")
-
-    try:
-        ai = AzureAI(api_key=api_key, server_url=SERVER_URL)
-        newcontent = ai.complete(prompt, text)
-    except Exception as e:
-        sys.stderr.write(f"AzureAI failed: {e}\n")
-
-    if not newcontent:
+    for order in orders:
         try:
-            ai = OpenAI(api_key=api_key, server_url=SERVER_URL)
+            if order == "chatgpt":
+                ai = ChatGPT(api_key=None, server_url=None)
+            elif order == "gemini":
+                ai = Gemini(
+                    api_key="pass::" + args.gemini_api_pass_key, server_url=None
+                )
+            elif order == "azureai":
+                ai = AzureAI(api_key=api_key, server_url=SERVER_URL)
+            elif order == "openai":
+                ai = OpenAI(api_key=api_key, server_url=SERVER_URL)
+            elif order == "mistralai":
+                ai = MistralAI(api_key=api_key, server_url=SERVER_URL)
+            elif order == "groq":
+                ai = Groq(api_key="pass::" + args.groq_api_pass_key, server_url=None)
             newcontent = ai.complete(prompt, text)
+            if newcontent:
+                break
         except Exception as e:
-            sys.stderr.write(f"OpenAI failed: {e}\n")
-
-    if not newcontent:
-        try:
-            ai = MistralAI(api_key=api_key, server_url=SERVER_URL)
-            newcontent = ai.complete(prompt, text)
-        except Exception as e:
-            sys.stderr.write(f"MistralAI failed: {e}\n")
-
-    if not newcontent:
-        try:
-            ai = Groq(api_key="pass::" + args.groq_api_pass_key, server_url=None)
-            newcontent = ai.complete(prompt, text)
-        except Exception as e:
-            sys.stderr.write(f"Groq failed: {e}\n")
+            sys.stderr.write(f"{order.capitalize()} failed: {e}\n")
 
     if not newcontent:
         sys.stderr.write("All failed, exiting\n")
@@ -58,7 +45,7 @@ def fallover(args, prompt, api_key, text):
     return common.show_response(args, text, newcontent)
 
 
-def run_args(args, prompt):
+def args(args, prompt):
     text = common.get_text()
     api_key = common.get_pass_key(args.github_api_pass_key)
     if args.mistral:
