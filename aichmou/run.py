@@ -45,8 +45,8 @@ def fallover(args, prompt, api_key, text, orders=None):
     return common.show_response(args, text, newcontent)
 
 
-def args(args, prompt):
-    text = common.get_text()
+def args(args, prompt, text=None):
+    text = text or common.get_text()
     api_key = common.get_pass_key(args.github_api_pass_key)
     if args.mistral:
         ai = MistralAI(api_key=api_key, server_url=SERVER_URL)
