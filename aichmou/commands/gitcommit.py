@@ -62,6 +62,7 @@ def gitcommit(ctx, commit):
     pprompt = prompt.GIT_COMMIT
     text = None
     if commit:
+        args.no_clipboard_copy = True
         text = get_diff_from_staged_unstaged().strip()
     output = run.args(args, pprompt, text=text)
     if not output:
