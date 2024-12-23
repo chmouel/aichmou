@@ -48,14 +48,22 @@ python -m aichmou.common gitcommit [options]
 To correct spelling and grammar:
 
 ```bash
-echo "Ths is a smple txt." | python -m aichmou.common spell
+echo "Ths is a smple txt." | aichmou spell
 ```
 
 To generate a git commit message:
 
 ```bash
-git diff | python -m aichmou.common gitcommit
+git diff | aichmou gitcommit
 ```
+
+you can directly commit the currently staged and unstaged changes with the -c option:
+
+```bash
+aichmou gitcommit -c
+```
+
+it will let you edit the commit message in your editor afterward.
 
 ## Configuration
 
