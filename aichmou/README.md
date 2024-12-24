@@ -1,16 +1,17 @@
+
 # Aichmou
 
 Aichmou is a tool designed to correct text and generate git commit messages using various AI models.
 
 ## Installation
 
-To install the dependencies, install [uv](https://docs.astral.sh/uv/getting-started/installation/) and run:
+To install the dependencies, first install [uv](https://docs.astral.sh/uv/getting-started/installation/) and then run:
 
 ```bash
 uv sync
 ```
 
-source the virtual
+Activate the virtual environment:
 
 ```bash
 source .venv/bin/activate
@@ -43,7 +44,7 @@ The `gitcommit` subcommand is used to generate a git commit message based on the
 python -m aichmou.common gitcommit [options]
 ```
 
-### Example
+### Examples
 
 To correct spelling and grammar:
 
@@ -57,13 +58,13 @@ To generate a git commit message:
 git diff | aichmou gitcommit
 ```
 
-you can directly commit the currently staged and unstaged changes with the -c option:
+To directly commit the currently staged and unstaged changes with the `-c` option:
 
 ```bash
 aichmou gitcommit -c
 ```
 
-it will let you edit the commit message in your editor afterward.
+This will let you edit the commit message in your editor afterward.
 
 ## Configuration
 
@@ -91,3 +92,15 @@ The keys can then be referenced in the command options:
 ```bash
 python -m aichmou.common spell --groq --groq-api-pass-key groq/api
 ```
+
+## License
+
+[Apache-2.0](./LICENSE)
+
+## Authors
+
+### Chmouel Boudjnah
+
+- Fediverse - <[@chmouel@chmouel.com](https://fosstodon.org/@chmouel)>
+- Twitter - <[@chmouel](https://twitter.com/chmouel)>
+- Blog  - <[https://blog.chmouel.com](https://blog.chmouel.com)>
