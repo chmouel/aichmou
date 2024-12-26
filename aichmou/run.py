@@ -9,7 +9,7 @@ from .providers.mistral import MistralAI
 from .providers.openai import OpenAI
 
 SERVER_URL = "https://models.inference.ai.azure.com"
-DEFAULT_ORDERS = ["chatgpt", "gemini", "azureai", "openai", "mistralai", "groq"]
+DEFAULT_ORDERS = ["gemini", "azureai", "openai", "mistralai", "groq", "chatgpt"]
 
 
 def fallover(args, prompt, api_key, text, orders=None):
