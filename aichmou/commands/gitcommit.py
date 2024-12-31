@@ -1,5 +1,6 @@
 import os
 import subprocess
+import sys
 
 import click
 
@@ -65,7 +66,9 @@ def gitcommit(ctx, commit):
         args.no_clipboard_copy = True
         text = get_diff_from_staged_unstaged().strip()
     output = run.args(args, pprompt, text=text)
-    if not output:
+    if not output or output == "Veuillez fournir le texte à corriger.":
+        if args.no_output:
+            sys.exit(1)
         return
     if commit:
         git_commit(output)
