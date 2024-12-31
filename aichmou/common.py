@@ -46,9 +46,24 @@ def get_clipboard_text() -> str:
                 subprocess.check_output("pbpaste", shell=True).decode("utf-8").strip()
             )
         elif sys.platform.startswith("linux"):
-            return (
-                subprocess.check_output("wl-paste", shell=True).decode("utf-8").strip()
-            )
+            if shutil.which("copyq"):
+                try:
+                    selection = (
+                        subprocess.check_output("copyq selection", shell=True)
+                        .decode("utf-8")
+                        .strip()
+                    )
+                    if selection:
+                        return selection
+                except subprocess.CalledProcessError:
+                    pass
+            if shutil.which("wl-paste"):
+                return (
+                    subprocess.check_output("wl-paste", shell=True)
+                    .decode("utf-8")
+                    .strip()
+                )
+            raise ClipboardError("No clipboard tool found")
         else:
             raise ClipboardError("Unsupported platform")
     except subprocess.CalledProcessError as e:
