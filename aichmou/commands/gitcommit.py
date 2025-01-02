@@ -4,7 +4,7 @@ import sys
 
 import click
 
-from aichmou import prompt, run
+from aichmou import common, prompt, run
 from aichmou.args import cli
 
 
@@ -57,7 +57,7 @@ def get_diff_from_staged_unstaged():
 def gitcommit(ctx, commit):
     """Generate a git commit message"""
     args = ctx.obj["args"]
-    args.orders = run.DEFAULT_ORDERS
+    args.orders = common.DEFAULT_ORDERS
     args.orders.remove("openai")
     args.orders.insert(0, "openai")
     pprompt = prompt.GIT_COMMIT

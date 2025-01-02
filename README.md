@@ -76,6 +76,19 @@ Aichmou can be configured to use different AI models by setting the appropriate 
 - `--groq`: Use Groq
 - `--gemini`: Use Gemini
 
+If you want to use another OpenAI endpoint like for example using it with a local
+ollama/lm-studio you can use the flag:
+
+`--openai-api-url`
+
+for example:
+
+```bash
+ai --openai-api-url http://localhost:1234/v1
+```
+
+Furthermore you can pass your own model with the flag `--model`
+
 ### API Keys
 
 API keys can be stored in a password manager and retrieved using the `pass` command. For example:

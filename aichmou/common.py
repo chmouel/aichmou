@@ -6,6 +6,10 @@ import subprocess
 import sys
 import tempfile
 
+SERVER_URL = "https://models.inference.ai.azure.com"
+DEFAULT_ORDERS = ["gemini", "azureai", "openai", "mistralai", "groq", "chatgpt"]
+OPENAI_DEFAULT_MODEL = "gpt-4o-mini"
+
 
 class PassKeyError(Exception):
     """Exception raised for errors in retrieving the pass key."""

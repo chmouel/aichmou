@@ -1,6 +1,6 @@
 import click
 
-from . import run
+from . import common
 
 
 class DictToObject:
@@ -35,6 +35,16 @@ class DictToObject:
 @click.option("--azure", is_flag=True, default=False, help="Use Azure")
 @click.option("--openai", is_flag=True, default=False, help="Use OpenAI")
 @click.option(
+    "--openai-api-url",
+    help="ChatGPT API URL",
+    default=common.SERVER_URL,
+)
+@click.option(
+    "--model",
+    help="ChatGPT API URL",
+    default=common.OPENAI_DEFAULT_MODEL,
+)
+@click.option(
     "--chatgpt",
     is_flag=True,
     default=False,
@@ -53,6 +63,6 @@ class DictToObject:
 @click.pass_context
 def cli(ctx, *_args, **_kwargs):
     ctx.ensure_object(dict)
-    _kwargs["orders"] = run.DEFAULT_ORDERS
+    _kwargs["orders"] = common.DEFAULT_ORDERS
     ctx.obj["args"] = DictToObject(_kwargs)
     return _args, _kwargs
