@@ -9,9 +9,11 @@ from .abstract_ai import AbstractAI
 
 
 class Gemini(AbstractAI):
-    model = "gemini-1.5-flash"
+    default_model = "gemini-2.0-flash-exp"
 
     def complete(self, prompt: str, text: str) -> str:
+        if not self.model:
+            self.model = self.default_model
         api_key = self.api_key
         if self.api_key.startswith("pass::"):
             api_key = get_pass_key(self.api_key.split("::")[1])
