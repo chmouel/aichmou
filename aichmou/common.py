@@ -86,9 +86,26 @@ def set_clipboard_text(content: str):
         raise ClipboardError(f"Error setting clipboard text: {e}")
 
 
-def get_text() -> str:
+def get_text(args: argparse.Namespace) -> str:
     if select.select([ sys.stdin, ], [], [], 0.0,)[0]:  # fmt: skip
         text = sys.stdin.read().strip()
+    elif args.editor:
+        todelete = False
+        if args.editor_filename:
+            editor_filename = args.editor_filename
+        else:
+            with tempfile.NamedTemporaryFile(
+                suffix=".tmp.md", delete=False
+            ) as temp_file:
+                todelete = True
+                editor_filename = temp_file.name
+        editor = os.getenv("EDITOR", "vi")
+        os.system(f"{editor} {editor_filename}")
+        with open(editor_filename, "r") as temp_file:
+            text = temp_file.read().strip()
+        if todelete:
+            os.remove(editor_filename)
+
     else:
         text = get_clipboard_text()
         if not text:
@@ -116,6 +133,11 @@ def show_response(args: argparse.Namespace, oldcontent, content: str) -> str:
 
     if oldcontent == content:
         return ""
+
+    if args.editor_filename:
+        with open(args.editor_filename, "a") as f:
+            f.write("\nAnswer:\n")
+            f.write(content)
 
     if not args.no_diff:
         diff = diff_content(args, oldcontent, content).strip()

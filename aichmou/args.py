@@ -60,6 +60,16 @@ class DictToObject:
     default="google/gemini-api",
     help="Gemini API Key in pass store",
 )
+@click.option(
+    "--editor",
+    default=False,
+    help="Use editor to edit the text when no text is provided",
+)
+@click.option(
+    "-F",
+    "--editor-filename",
+    help="Use this file instead of a temporary file, this let you remember conversation",
+)
 @click.pass_context
 def cli(ctx, *_args, **_kwargs):
     ctx.ensure_object(dict)

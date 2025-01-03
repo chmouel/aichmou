@@ -65,6 +65,16 @@ aichmou gitcommit -c
 
 it will let you edit the commit message in your editor afterward.
 
+To just have a conversation with an answer
+
+```bash
+aichmou prompt
+```
+
+it will by default open your $EDITOR unless you pass some text to its standard input.
+
+```bash
+
 ## Configuration
 
 Aichmou can be configured to use different AI models by setting the appropriate flags:
@@ -81,7 +91,7 @@ ollama/lm-studio you can use the flag:
 
 `--openai-api-url`
 
-for example:
+For example:
 
 ```bash
 ai --openai-api-url http://localhost:1234/v1

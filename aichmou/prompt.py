@@ -48,3 +48,11 @@ THE FILE SUMMARIES:
 
 Remember to write only one line, no more than 50 characters.
 """
+
+DEFAULT = """You are a helpful assistant.
+Here is my question I would like help with, be as succinct as possible:
+
+###
+%s
+###
+"""
