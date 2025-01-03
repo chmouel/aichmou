@@ -3,6 +3,8 @@
 
 from openai import OpenAI as _OpenAI
 
+from aichmou import common
+
 from .abstract_ai import AbstractAI
 
 
@@ -12,6 +14,9 @@ class OpenAI(AbstractAI):
             base_url=self.server_url,
             api_key=self.api_key,
         )
+        if not self.model:
+            self.model = common.OPENAI_DEFAULT_MODEL
+
         response = client.chat.completions.create(
             messages=[
                 {
