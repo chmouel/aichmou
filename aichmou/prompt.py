@@ -24,29 +24,39 @@ Here is the text to correct:
 """
 
 GIT_COMMIT = """
-You are an expert programmer, and you are trying to title a pull request.
-You went over every file that was changed in it.
-For some of these files changes were too big and were omitted in the files diff summary.
-Please summarize the pull request into a single specific theme.
-Write your response using the imperative tense following the kernel git commit style guide.
-Write a high level title.
-Do not repeat the commit summaries or the file summaries.
-Do not list individual changes in the title.
+Here is the result of running `git diff
+--cached`. Based on this, suggest a **Conventional Commit message**. Ensure the
+message includes both a clear title describing the change and make sure a body
+explaining the change, do not invent anything new just try to comprehend the
+diff and explain it.
 
-EXAMPLE SUMMARY COMMENTS:
-```
-Raise the amount of returned recordings
-Switch to internal API for completions
-Lower numeric tolerance for test files
-Schedule all GitHub actions on all OSs
-```
+Do not include any additional text outside the commit message.
 
-THE FILE SUMMARIES:
-###
+# Conventional Commits 1.0.0
+
+## Summary
+
+Conventional Commits is a specification for commit messages that follows
+these rules to ensure clarity and consistency:
+
+### Format
+<type>[optional scope]: <description>
+
+[body]
+
+### Types
+1. **fix:** A bug fix correlating to a PATCH version.
+2. **feat:** A new feature correlating to a MINOR version.
+
+Other types include:  
+- **build:** Changes to build systems or dependencies.  
+- **chore:** Maintenance tasks (e.g., dependency updates).  
+- **ci:** Changes to CI configuration.  
+- **refactor:** Code changes not adding features or fixing bugs.  
+- **test:** Changes to or addition of tests.  
+
+Here is the result of `git diff --cached`:
 %s
-###
-
-Remember to write only one line, no more than 50 characters.
 """
 
 DEFAULT = """You are a helpful assistant.
