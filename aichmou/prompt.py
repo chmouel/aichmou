@@ -66,3 +66,20 @@ Here is my question I would like help with, be as succinct as possible:
 %s
 ###
 """
+
+BUISNESS_REPHRASE = """
+Rephrase the following text to make it suitable for professional business
+communication. Use a formal yet approachable tone, ensuring clarity,
+conciseness, and an emphasis on key points. The output should sound
+professional, polished, and appropriate for corporate settings. Avoid overly
+complex language or jargon that might obscure the message.
+
+The audience is business colleagues or clients, so the tone should be
+appropriate.
+
+Respond by returning only the rephrased text, with no
+explanations, annotations, or additional content.
+
+Text to rephrase:
+%s
+"""
